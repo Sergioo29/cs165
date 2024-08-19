@@ -17,52 +17,35 @@
 #     turned down the gravity a little, to give the player a reaction window.
 ###############################################################
 
+# Compiler and linker
+CXX = mingw32-g++
+CXXFLAGS = -Wall -Wextra -std=c++11
+LDFLAGS = -lfreeglut -lglu32 -lopengl32
 
-LFLAGS = -lglut -lGLU -lGL
+# Source files
+SRCS = driver.cpp ground.cpp game.cpp uiInteract.cpp uiDraw.cpp point.cpp lander.cpp
 
-###############################################################
-# Build the main Moon Lander game
-###############################################################
-a.out: driver.o ground.o game.o uiInteract.o uiDraw.o point.o lander.o
-	g++ driver.o ground.o game.o uiInteract.o uiDraw.o point.o lander.o $(LFLAGS)
-	tar -j -cf moonLander.tar makefile *.h *.cpp
+# Object files
+OBJS = $(SRCS:.cpp=.o)
 
-###############################################################
-# Individual files
-#    uiDraw.o      Draw polygons on the screen and do all OpenGL graphics
-#    uiInteract.o  Handles input events
-#    point.o       The position on the screen
-#    ground.o      Handles the ground / world
-#    game.o        Handles the game interaction
-###############################################################
-uiDraw.o: uiDraw.cpp uiDraw.h
-	g++ -c uiDraw.cpp
+# Executable
+EXEC = moonlander.exe
 
-uiInteract.o: uiInteract.cpp uiInteract.h
-	g++ -c uiInteract.cpp
+# Default target
+all: $(EXEC)
 
-point.o: point.cpp point.h
-	g++ -c point.cpp
+# Link the executable
+$(EXEC): $(OBJS)
+	$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
-ground.o: ground.cpp ground.h
-	g++ -c ground.cpp
+# Compile source files into object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-game.o: game.h game.cpp uiDraw.h uiInteract.h point.h ground.h
-	g++ -c game.cpp
-
-driver.o: driver.cpp game.h uiInteract.h
-	g++ -c driver.cpp
-
-#######################################################################
-# ADD YOUR ADDITIONAL RULES HERE!
-#
-# Then, don't forget to add them to the dependecy list for a.out above.
-#######################################################################
-lander.o:	lander.h lander.cpp point.h
-				g++	-c	lander.cpp
-
-###############################################################
-# General rules
-###############################################################
+# Clean up build files
 clean:
-	rm a.out *.o *.tar
+	del /Q $(OBJS) $(EXEC)
+
+# Rebuild the project
+rebuild: clean all
+

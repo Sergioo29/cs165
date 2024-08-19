@@ -30,6 +30,9 @@ public:
   void setDx(float dx) { this->dx = dx; }
   void setDy(float dy) { this->dy = dy; }
 
+  // From brother GPT:
+  void add(const Velocity &other);
+  void advancePoint(Point &point);
 };
 
 
